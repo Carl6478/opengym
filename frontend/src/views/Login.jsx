@@ -5,6 +5,8 @@ import { hasData } from '../store/useStore.js'
 import { t } from '../lib/i18n.js'
 import { DEMO, REPO } from '../lib/demo.js'
 import { guestAllowed } from '../lib/guest.js'
+import { SUPA } from '../lib/supabase.js'
+import EmailAuth from './EmailAuth.jsx'
 import { useState, useRef, useEffect } from 'react'
 import Icon from '../components/Icon.jsx'
 import { Button } from '../components/ui.jsx'
@@ -59,6 +61,17 @@ export default function Login() {
     <h1 style={{ fontSize: 34, fontWeight: 700, letterSpacing: '-.028em', margin: '10px 0 4px' }}>openGym</h1>
   </>
   const wrap = { display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '78vh', textAlign: 'center' }
+
+  // Supabase build (this fork): email + password, the same account as Cuppy.
+  if (SUPA) return (
+    <div className="narrow" style={wrap}>
+      {head}
+      <div className="muted" style={{ marginBottom: 26 }}>{t('Your workouts. Your weights. Your profile.')}</div>
+      <EmailAuth />
+      {canGuest && <><div style={{ height: 6 }} /><Button variant="ghost" className="dim" onClick={() => setGuest(true)}>{t('Continue without account')}</Button></>}
+      <div className="dim small" style={{ marginTop: 26, lineHeight: 1.5 }}>{t('Same account as Cuppy — one email and password for both.')}<br />{t('Each profile keeps its own plan, workouts & body weight.')}</div>
+    </div>
+  )
 
   // Demo build: no backend to sign in against — the only way in is the local guest profile.
   if (DEMO) return (

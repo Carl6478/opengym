@@ -6,6 +6,7 @@ import { DEMO, DEMO_SEEDED } from '../lib/demo.js'
 import { guestAllowed } from '../lib/guest.js'
 import { MOBILE, nativeLoad, nativeSave, syncReminder, writeAutoBackup } from '../lib/mobile.js'
 import { loadRemote, chooseLocal, forgetRemote, connect } from '../lib/remote.js'
+import { SUPA, sbSession, sbSignOut, sbPull, sbPush } from '../lib/supabase.js'
 
 const KEY = 'gym_state_v1'
 export const DEF = {
@@ -119,6 +120,8 @@ export const useStore = create((set, get) => {
     config: null,
     async loadConfig() {
       if (get().config) return get().config
+      // Supabase build: there is no /api/config — guests are always welcome, nothing is invite-only.
+      if (SUPA) { const c = { allow_guest: true, invite_only: false }; set({ config: c }); return c }
       try { const c = await api('/api/config'); set({ config: c }); return c }
       catch { return null }
     },
@@ -132,12 +135,16 @@ export const useStore = create((set, get) => {
     async pushState() {
       if (!get().user) return
       clearTimeout(pushTm)
-      try { await api('/api/data', { method: 'PUT', body: JSON.stringify({ state: get().S }) }); localStorage.removeItem('gym_dirty') }
+      try {
+        if (SUPA) await sbPush(get().S)
+        else await api('/api/data', { method: 'PUT', body: JSON.stringify({ state: get().S }) })
+        localStorage.removeItem('gym_dirty')
+      }
       catch (e) { localStorage.setItem('gym_dirty', '1') }
     },
     async pullState() {
       try {
-        const { state } = await api('/api/data')
+        const state = SUPA ? await sbPull() : (await api('/api/data')).state
         const S = get().S
         const dirty = localStorage.getItem('gym_dirty') === '1'
         if (state && (!hasData(S) || ((state._ts || 0) >= (S._ts || 0) && !dirty))) {
@@ -150,7 +157,11 @@ export const useStore = create((set, get) => {
     },
 
     async signOut() {
-      try { await get().pushState(); await api('/api/logout', { method: 'POST', body: '{}' }) } catch (e) { /* */ }
+      try {
+        await get().pushState()
+        if (SUPA) await sbSignOut()
+        else await api('/api/logout', { method: 'POST', body: '{}' })
+      } catch (e) { /* */ }
       clearLocalSession()
     },
 
@@ -186,7 +197,8 @@ export const useStore = create((set, get) => {
     // would sign the user out of the one place the bump didn't reach. Caller reports the error.
     async signOutAll() {
       await get().pushState()   // never throws — stores gym_dirty and moves on when offline
-      await api('/api/logout/all', { method: 'POST', body: '{}' })
+      if (SUPA) await sbSignOut(true)
+      else await api('/api/logout/all', { method: 'POST', body: '{}' })
       clearLocalSession()
     },
 
@@ -242,6 +254,26 @@ export const useStore = create((set, get) => {
           await get().resetDemo()
         }
         get().setGuest(true)
+        set({ ready: true })
+        return
+      }
+      // Supabase build (this fork): supabase-js keeps the session in its own storage, so "who am
+      // I" is a local question — restore the profile, then pull, exactly like the signed-in flow
+      // below minus /api/config and /api/me. Guests are never locked out here.
+      if (SUPA) {
+        try {
+          const me = await sbSession()
+          if (me) {
+            get().setUser(me)
+            await get().pullState()
+            const tz = localTZ()
+            if (get().S.reminder?.on && get().S.reminder.tz !== tz) {
+              get().update(s => { s.reminder = { ...s.reminder, tz } })
+            }
+          } else if (get().user) {
+            get().setUser(null)   // session expired or ended elsewhere — local copy stays put
+          }
+        } catch (e) { /* offline — keep the cached profile and the local copy */ }
         set({ ready: true })
         return
       }

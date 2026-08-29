@@ -1,3 +1,4 @@
+import { SUPA } from '../lib/supabase.js'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store/useStore.js'
@@ -453,7 +454,7 @@ function ActiveWorkout() {
   // Live-presence heartbeat so the admin dashboard can show who's training now. Signed-in only —
   // guests have no server session. Reads fresh state each tick so progress stays current.
   useEffect(() => {
-    if (!useStore.getState().user) return
+    if (!useStore.getState().user || SUPA) return   // no presence endpoint on Supabase
     let stopped = false
     const ping = active => {
       const A2 = useStore.getState().S.active

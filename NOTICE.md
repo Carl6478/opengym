@@ -123,3 +123,11 @@ English source produced with OpenAI Codex and Anthropic Claude Code
 language-model assistance. They are not copied from a separate Portuguese
 dataset. Their review status and translation policy are documented alongside
 the source files.
+
+## This fork
+
+The modifications in this repository (Supabase sign-in and sync, the Webhead theme, Firebase
+hosting — see [docs/CUPPY_FORK.md](docs/CUPPY_FORK.md)) are Copyright (C) 2026 the Cuppy project
+and are licensed under the same **GNU AGPL v3.0** as openGym. Exercise images and animations are
+not part of this repository; the hosted app loads them from the dataset's CDN under the terms
+described above.

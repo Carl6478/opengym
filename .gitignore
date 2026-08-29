@@ -6,7 +6,7 @@ media/gif/
 data/
 
 # Local config
-.env
+/.env
 
 # Build output / deps
 frontend/dist/
@@ -16,3 +16,6 @@ node_modules/
 node_modules
 .claude/
 .agents/
+
+# Firebase CLI cache
+.firebase/

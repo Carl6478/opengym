@@ -30,7 +30,7 @@ import Admin from './views/Admin.jsx'
 bindUI(useUI)   // lets the shared controls open sheets without importing the store at module scope
 
 // theme === 'system' follows the OS/browser preference instead of a fixed choice.
-const resolveTheme = theme => theme === 'light' || theme === 'dark'
+const resolveTheme = theme => theme === 'light' || theme === 'dark' || theme === 'webhead'
   ? theme
   : (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
 
@@ -39,7 +39,7 @@ function applyPrefs(theme, accent) {
   de.dataset.theme = resolveTheme(theme)
   de.dataset.accent = ACCENTS[accent] ? accent : 'lime'
   const meta = document.querySelector('meta[name="theme-color"]')
-  if (meta) meta.content = de.dataset.theme === 'light' ? '#f2f2f7' : '#000000'
+  if (meta) meta.content = de.dataset.theme === 'light' ? '#f2f2f7' : de.dataset.theme === 'webhead' ? '#0a1424' : '#000000'
 }
 
 function Shell() {

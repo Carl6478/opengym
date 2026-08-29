@@ -1,3 +1,5 @@
+> **Cuppy fork.** This is [openGym](https://gitlab.com/DuarteSantos8/opengym) running on Supabase (email + password — the same account as [Cuppy](https://github.com/taljsubs-eng/Cuppy)) with an extra **Webhead** theme, hosted at **https://opengym-cuppy.web.app**. What changed and how to build it: [docs/CUPPY_FORK.md](docs/CUPPY_FORK.md). Everything below is the upstream README. License: AGPL-3.0, unchanged.
+
 <div align="center">
 
 <img src="assets/banner.png" alt="openGym" width="720">

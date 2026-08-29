@@ -990,3 +990,258 @@ h4.sec{
   .exmedia img{height:380px}
   .hm-wrap{display:flex;flex-direction:column;align-items:center}
 }
+
+/* ======================================================================= */
+/* WEBHEAD — Cuppy's navy-CRT theme, ported to the gym app.                */
+/* 8-bit chamfered panels, pixel labels, scanlines. Everything is a token  */
+/* swap first; the chamfers and scanlines are the only new geometry.       */
+/* Written after the accent rules on purpose: the [data-accent] variant    */
+/* out-ranks any saved accent swatch, so the ice accent always wins here.  */
+/* ======================================================================= */
+:root[data-theme="webhead"],
+:root[data-theme="webhead"][data-accent]{
+  --bg:        #0a1424;
+  --bg-el:     #0f1d33;
+  --surface:   #112645;
+  --surface-2: #17325a;
+  --surface-3: #1e3f6e;
+
+  --label:     #f4f7fa;
+  --label-2:   #8fc4e6;
+  --label-3:   #6f8fb0;
+  --label-4:   rgba(167,211,236,.28);
+
+  --sep:       #2a4d75;
+  --sep-op:    #3d6b9e;
+  --hair:      1px;
+
+  --blue:#6ea3d1; --green:#4fd340; --red:#e04040; --orange:#e3a321;
+  --yellow:#d99a2b; --teal:#a7d3ec; --indigo:#8fc4e6; --pink:#e04040;
+  --purple:#c9e7f7; --mint:#4fd340; --brown:#d99a2b; --grey:#6f8fb0;
+
+  --acc:#a7d3ec; --acc-2:#6ea3d1; --on-acc:#0b1a2c;
+  --acc-soft: rgba(167,211,236,.14);
+  --acc-line: rgba(167,211,236,.42);
+
+  /* the 8-bit grid: no rounded corners anywhere */
+  --r-sm:0; --r:0; --r-lg:0; --r-xl:0; --r-card:0;
+
+  --wh-line:#3d6b9e; --wh-line-soft:#2a4d75; --wh-line-bright:#6ea3d1;
+  --wh-red:#c42b2b; --wh-red-bright:#e04040; --wh-ice-bright:#c9e7f7;
+  --wh-pixel:'Silkscreen','Press Start 2P',ui-monospace,monospace;
+  --wh-cut:6px;
+  --wh-clip:polygon(var(--wh-cut) 0,calc(100% - var(--wh-cut)) 0,100% var(--wh-cut),100% calc(100% - var(--wh-cut)),calc(100% - var(--wh-cut)) 100%,var(--wh-cut) 100%,0 calc(100% - var(--wh-cut)),0 var(--wh-cut));
+}
+
+/* --- ground: navy gradient + CRT scanlines over everything --- */
+:root[data-theme="webhead"] html,
+:root[data-theme="webhead"] body{background:#0a1424}
+:root[data-theme="webhead"] body{
+  background:linear-gradient(180deg,#0a1424 0%,#0f1d33 55%,#132542 100%) fixed;
+  font-family:Roboto,'Segoe UI',system-ui,-apple-system,sans-serif;
+}
+:root[data-theme="webhead"] body::after{
+  content:'';position:fixed;inset:0;z-index:1000;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px);
+}
+
+/* --- chamfered panel: the element paints the outline, ::before paints the fill --- */
+:root[data-theme="webhead"] .card,
+:root[data-theme="webhead"] .sect-b,
+:root[data-theme="webhead"] .item,
+:root[data-theme="webhead"] .tile,
+:root[data-theme="webhead"] .today-row,
+:root[data-theme="webhead"] .ss-card,
+:root[data-theme="webhead"] .efftbl,
+:root[data-theme="webhead"] .exmedia,
+:root[data-theme="webhead"] .center,
+:root[data-theme="webhead"] #timer{
+  position:relative;isolation:isolate;
+  --wh-fill:var(--surface);
+  background:var(--wh-line);clip-path:var(--wh-clip);
+  box-shadow:none;border:0;
+}
+:root[data-theme="webhead"] .card::before,
+:root[data-theme="webhead"] .sect-b::before,
+:root[data-theme="webhead"] .item::before,
+:root[data-theme="webhead"] .tile::before,
+:root[data-theme="webhead"] .today-row::before,
+:root[data-theme="webhead"] .ss-card::before,
+:root[data-theme="webhead"] .efftbl::before,
+:root[data-theme="webhead"] .exmedia::before,
+:root[data-theme="webhead"] .center::before,
+:root[data-theme="webhead"] #timer::before{
+  content:'';position:absolute;inset:2px;z-index:-1;
+  background:var(--wh-fill);--wh-cut:5px;clip-path:var(--wh-clip);
+}
+:root[data-theme="webhead"] .item:active,
+:root[data-theme="webhead"] .tile.tappable:active,
+:root[data-theme="webhead"] .today-row:active{background:var(--wh-line-bright);--wh-fill:var(--surface-2)}
+:root[data-theme="webhead"] .today-row{--wh-fill:var(--surface-2)}
+:root[data-theme="webhead"] .ss-card{background:var(--acc)}
+:root[data-theme="webhead"] .exmedia{--wh-fill:#fff}
+:root[data-theme="webhead"] .center,
+:root[data-theme="webhead"] #timer{--wh-fill:var(--bg-el);background:var(--wh-line-bright)}
+:root[data-theme="webhead"] #timer.working{border:0;background:var(--acc)}
+:root[data-theme="webhead"] .sheet{
+  background:var(--bg-el);border-top:2px solid var(--wh-line-bright);border-radius:0;
+}
+:root[data-theme="webhead"] .sheet .grab{background:var(--wh-line)}
+:root[data-theme="webhead"] .thumb{border-radius:0}
+:root[data-theme="webhead"] .thumb-x{background:var(--surface-2);color:var(--label-2)}
+
+/* --- pixel labels: every small caps-ish label becomes an 8-bit HUD label --- */
+:root[data-theme="webhead"] .sect-t,
+:root[data-theme="webhead"] .sect-f,
+:root[data-theme="webhead"] .card h2,
+:root[data-theme="webhead"] h4.sec,
+:root[data-theme="webhead"] .tile .l,
+:root[data-theme="webhead"] .sethead,
+:root[data-theme="webhead"] .setph,
+:root[data-theme="webhead"] .wday .lbl,
+:root[data-theme="webhead"] .today-row .lbl2,
+:root[data-theme="webhead"] .cal-h,
+:root[data-theme="webhead"] .hm-months span,
+:root[data-theme="webhead"] .hm-legend,
+:root[data-theme="webhead"] .efftbl .hd .n,
+:root[data-theme="webhead"] .efftbl .hd .f,
+:root[data-theme="webhead"] .ss-label,
+:root[data-theme="webhead"] .ss-hd,
+:root[data-theme="webhead"] .stp-l,
+:root[data-theme="webhead"] .tag,
+:root[data-theme="webhead"] .pr,
+:root[data-theme="webhead"] .t-cap{
+  font-family:var(--wh-pixel);font-size:10px;line-height:1.5;font-weight:400;
+  letter-spacing:.04em;text-transform:uppercase;
+}
+:root[data-theme="webhead"] .sect-t,
+:root[data-theme="webhead"] .card h2,
+:root[data-theme="webhead"] h4.sec{color:var(--acc)}
+:root[data-theme="webhead"] .sect-f{text-transform:none;letter-spacing:.02em;color:var(--label-3)}
+:root[data-theme="webhead"] .hdr h1,
+:root[data-theme="webhead"] .t-large{
+  font-family:var(--wh-pixel);font-size:22px;line-height:1.2;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--wh-ice-bright);
+  text-shadow:0 0 14px rgba(167,211,236,.35);
+}
+:root[data-theme="webhead"] .sheet h3{
+  font-family:var(--wh-pixel);font-size:14px;letter-spacing:.03em;text-transform:uppercase;color:var(--wh-ice-bright);
+}
+:root[data-theme="webhead"] .card .big,
+:root[data-theme="webhead"] .tile .v,
+:root[data-theme="webhead"] .stat-v,
+:root[data-theme="webhead"] #timer .t,
+:root[data-theme="webhead"] .bw-read{color:var(--wh-ice-bright)}
+
+/* --- controls: square, outlined, ice on navy --- */
+:root[data-theme="webhead"] .btn{
+  clip-path:var(--wh-clip);background:var(--surface-2);color:var(--wh-ice-bright);
+  box-shadow:inset 0 0 0 2px var(--wh-line);font-family:var(--wh-pixel);font-size:12px;
+  letter-spacing:.04em;text-transform:uppercase;font-weight:400;
+}
+:root[data-theme="webhead"] .btn.primary{background:var(--acc);color:var(--on-acc);box-shadow:none}
+:root[data-theme="webhead"] .btn.primary:active{background:var(--acc-2)}
+:root[data-theme="webhead"] .btn.tinted{background:var(--acc-soft);color:var(--acc);box-shadow:inset 0 0 0 2px var(--acc-line)}
+:root[data-theme="webhead"] .btn.danger{background:#3b1526;color:var(--wh-red-bright);box-shadow:inset 0 0 0 2px var(--wh-red)}
+:root[data-theme="webhead"] .btn.ghost,
+:root[data-theme="webhead"] .btn.plain{background:none;box-shadow:none;clip-path:none;color:var(--acc);text-transform:none;font-family:inherit;font-size:15px}
+:root[data-theme="webhead"] .btn.sm,
+:root[data-theme="webhead"] .btn.xs{--wh-cut:4px;font-size:10px}
+:root[data-theme="webhead"] .iconbtn{border-radius:0;--wh-cut:4px;clip-path:var(--wh-clip);background:var(--surface);box-shadow:inset 0 0 0 2px var(--wh-line-soft);color:var(--acc)}
+:root[data-theme="webhead"] .chip{border-radius:0;box-shadow:inset 0 0 0 1px var(--wh-line-soft);background:var(--surface);font-size:13px}
+:root[data-theme="webhead"] .chip.on{background:var(--acc);color:var(--on-acc);box-shadow:none}
+:root[data-theme="webhead"] .tag{border-radius:0;background:var(--bg-el);box-shadow:inset 0 0 0 1px var(--wh-line-soft);padding:3px 6px}
+:root[data-theme="webhead"] .tag.acc{background:var(--acc-soft);color:var(--acc)}
+:root[data-theme="webhead"] .field,
+:root[data-theme="webhead"] .input,
+:root[data-theme="webhead"] .searchf .field,
+:root[data-theme="webhead"] .search .input,
+:root[data-theme="webhead"] .timef{border-radius:0;background:var(--bg-el);box-shadow:inset 0 0 0 2px var(--wh-line-soft)}
+:root[data-theme="webhead"] .field:focus,
+:root[data-theme="webhead"] .input:focus{box-shadow:inset 0 0 0 2px var(--acc)}
+:root[data-theme="webhead"] .exnote{border-radius:0;background:var(--bg-el);box-shadow:inset 0 0 0 2px var(--wh-line-soft)}
+:root[data-theme="webhead"] .sw{border-radius:0;background:var(--bg-el);box-shadow:inset 0 0 0 2px var(--wh-line-soft)}
+:root[data-theme="webhead"] .sw .knob{border-radius:0;background:var(--label-2);box-shadow:none}
+:root[data-theme="webhead"] .sw.on{background:#1f4a2a;box-shadow:inset 0 0 0 2px var(--green)}
+:root[data-theme="webhead"] .sw.on .knob{background:var(--green)}
+:root[data-theme="webhead"] .seg{border-radius:0;background:var(--bg-el);box-shadow:inset 0 0 0 2px var(--wh-line-soft)}
+:root[data-theme="webhead"] .seg-sel{border-radius:0;background:var(--surface-3);box-shadow:inset 0 0 0 1px var(--wh-line-bright)}
+:root[data-theme="webhead"] .seg button{font-family:var(--wh-pixel);font-size:9px;letter-spacing:.03em;text-transform:uppercase}
+:root[data-theme="webhead"] .seg button.on{color:var(--wh-ice-bright)}
+:root[data-theme="webhead"] .stp{border-radius:0;background:var(--bg-el);box-shadow:inset 0 0 0 2px var(--wh-line-soft)}
+:root[data-theme="webhead"] .stp button:active{background:var(--surface-3)}
+:root[data-theme="webhead"] .stp .num{color:var(--wh-ice-bright)}
+:root[data-theme="webhead"] .chk,
+:root[data-theme="webhead"] .ck{border-radius:0;box-shadow:inset 0 0 0 2px var(--wh-line)}
+:root[data-theme="webhead"] .chk.on,
+:root[data-theme="webhead"] .ck.on{background:var(--green);color:#0b1a2c;box-shadow:none}
+:root[data-theme="webhead"] .ck.on svg{stroke:#0b1a2c}
+:root[data-theme="webhead"] .setrow .n{border-radius:0;background:var(--bg-el);box-shadow:inset 0 0 0 1px var(--wh-line-soft);font-family:var(--wh-pixel);font-size:9px}
+:root[data-theme="webhead"] .setrow.done .n{background:var(--green);color:#0b1a2c;box-shadow:none}
+:root[data-theme="webhead"] .setrow .setgo{border-radius:0}
+:root[data-theme="webhead"] .sld-track,
+:root[data-theme="webhead"] .sld-fill,
+:root[data-theme="webhead"] .wprog,
+:root[data-theme="webhead"] .wprog i,
+:root[data-theme="webhead"] #timer .bar,
+:root[data-theme="webhead"] .mrow .bar,
+:root[data-theme="webhead"] .mrow .bar i{border-radius:0}
+:root[data-theme="webhead"] .sld-knob{border-radius:0;background:var(--acc);box-shadow:0 0 0 2px #0b1a2c}
+:root[data-theme="webhead"] .lrow-i{border-radius:0;--wh-cut:3px;clip-path:var(--wh-clip);background:var(--tint,var(--acc));color:#0b1a2c}
+:root[data-theme="webhead"] .lrow.tap:active{background:var(--surface-2)}
+:root[data-theme="webhead"] .lrow-c{color:var(--acc)}
+:root[data-theme="webhead"] .glyph-cell,
+:root[data-theme="webhead"] .cal-d,
+:root[data-theme="webhead"] .wday,
+:root[data-theme="webhead"] .hm-c,
+:root[data-theme="webhead"] .swatch,
+:root[data-theme="webhead"] .mchip,
+:root[data-theme="webhead"] .ctip,
+:root[data-theme="webhead"] .bw-pm,
+:root[data-theme="webhead"] #toast{border-radius:0}
+:root[data-theme="webhead"] .glyph-cell,
+:root[data-theme="webhead"] .cal-d,
+:root[data-theme="webhead"] .bw-pm{box-shadow:inset 0 0 0 1px var(--wh-line-soft)}
+:root[data-theme="webhead"] .cal-d.today{box-shadow:inset 0 0 0 2px var(--acc)}
+:root[data-theme="webhead"] .wday.today .num{border-radius:0;background:var(--wh-red);color:#fff}
+:root[data-theme="webhead"] .hm-c.today{box-shadow:0 0 0 1.5px var(--wh-red-bright)}
+:root[data-theme="webhead"] #toast{
+  background:var(--bg-el);box-shadow:inset 0 0 0 2px var(--wh-line-bright),0 10px 30px -6px rgba(0,0,0,.6);
+  font-family:var(--wh-pixel);font-size:11px;letter-spacing:.03em;text-transform:uppercase;
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+}
+:root[data-theme="webhead"] .empty .ico{color:var(--acc)}
+:root[data-theme="webhead"] .item.in-ss{box-shadow:inset 3px 0 0 var(--wh-red-bright)}
+:root[data-theme="webhead"] .progline.warn{color:var(--orange)}
+
+/* --- tab bar: solid navy console, red start button --- */
+:root[data-theme="webhead"] #tabbar{
+  background:#0a1424;border-top:2px solid var(--wh-line);border-radius:0;
+  -webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;
+  padding-top:8px;
+}
+:root[data-theme="webhead"] #tabbar button{
+  font-family:var(--wh-pixel);font-size:8px;letter-spacing:.03em;text-transform:uppercase;color:var(--label-3);
+}
+:root[data-theme="webhead"] #tabbar button .icn{color:var(--label-2)}
+:root[data-theme="webhead"] #tabbar button.on{color:var(--wh-ice-bright)}
+:root[data-theme="webhead"] #tabbar button.on .icn{color:var(--wh-ice-bright)}
+:root[data-theme="webhead"] #tabbar button.start .cir{
+  border-radius:0;--wh-cut:8px;clip-path:var(--wh-clip);
+  background:var(--wh-red);color:#fff;box-shadow:none;
+}
+:root[data-theme="webhead"] #tabbar button.start span{color:var(--wh-red-bright)}
+:root[data-theme="webhead"] #tabbar button.start.rec .cir{background:var(--orange);color:#0b1a2c;box-shadow:none}
+:root[data-theme="webhead"] #tabbar button.start.rec .cir::after{border-radius:0;border-color:var(--orange)}
+:root[data-theme="webhead"] #tabbar button.start.rec span{color:var(--orange)}
+@media (min-width:1000px){
+  :root[data-theme="webhead"] #tabbar{border:2px solid var(--wh-line);border-radius:0;box-shadow:0 12px 40px -10px rgba(0,0,0,.6)}
+}
+:root[data-theme="webhead"] :focus-visible{outline-color:var(--wh-red-bright);border-radius:0}
+:root[data-theme="webhead"] .mback{background:rgba(5,10,20,.6)}
+
+/* Four theme choices no longer fit beside the row title on a phone, so the control takes
+   the next line, aligned with the title (past the 29px icon rail + 12px gap). */
+.lrow:has(.seg-theme){flex-wrap:wrap}
+.seg-theme{flex:1 1 100%;min-width:0;margin-left:41px;margin-top:2px}
+.seg-theme button{padding-left:4px;padding-right:4px}
